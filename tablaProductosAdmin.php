@@ -67,7 +67,7 @@ $categorias = $mysqli->query("SELECT IDcategorias, categoria FROM categorias");
             </div>
             <div class="col-md-4 d-flex align-items-end">
                 <button type="submit" class="btn btn-danger mr-2">Filtrar</button>
-                <a href="tables.php" class="btn btn-warning">Limpiar</a>
+                <a href="tablaProductosAdmin.php" class="btn btn-warning">Limpiar</a>
             </div>
         </div>
     </form>
