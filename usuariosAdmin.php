@@ -1,24 +1,43 @@
 <?php
-//Manda a llamar la parte superior de la pagina
+// Manda a llamar la parte superior de la pagina
 require 'vista/parte_superior_administrador.php';
+
+$mensaje = "";
 
 // Insertar usuario
 if (isset($_POST['guardar'])) {
     $nombre = $_POST['nombre'];
     $usuario = $_POST['usuario'];
-    $contraseña = password_hash($_POST['contraseña'], PASSWORD_DEFAULT); // encriptar
+    $contraseña = $_POST['contraseña'];
     $rol = $_POST['rol'];
 
-    $sql = "INSERT INTO usuarios (nombre, usuario, contraseña, rol)
-            VALUES ('$nombre', '$usuario', '$contraseña', '$rol')";
-    $mysqli->query($sql);
+    // Verificar si el usuario ya existe
+    $check = $mysqli->query("SELECT IDusuarios FROM usuarios WHERE usuario='$usuario'");
+
+    if ($check && $check->num_rows > 0) {
+        // Mensaje de usuario duplicado
+        $mensaje = "⚠️ El usuario <strong>$usuario</strong> ya está registrado, elija otro.";
+    } else {
+        // Insertar nuevo usuario
+        $sql = "INSERT INTO usuarios (nombre, usuario, contraseña, rol)
+                VALUES ('$nombre', '$usuario', '$contraseña', '$rol')";
+        if ($mysqli->query($sql)) {
+            $mensaje = "✅ Usuario <strong>$usuario</strong> registrado exitosamente.";
+        } else {
+            $mensaje = "❌ Error al registrar: " . $mysqli->error;
+        }
+    }
 }
 
 // Eliminar usuario
 if (isset($_GET['eliminar'])) {
     $id = $_GET['eliminar'];
     $sql = "DELETE FROM usuarios WHERE IDusuarios=$id";
-    $mysqli->query($sql);
+    if ($mysqli->query($sql)) {
+        $mensaje = "✅ Usuario eliminado correctamente.";
+    } else {
+        $mensaje = "❌ Error al eliminar: " . $mysqli->error;
+    }
 }
 
 // Editar usuario
@@ -28,30 +47,47 @@ if (isset($_POST['editar'])) {
     $usuario = $_POST['usuario'];
     $rol = $_POST['rol'];
 
-    // Si no se cambia contraseña
-    if (empty($_POST['contraseña'])) {
-        $sql = "UPDATE usuarios SET 
-                    nombre='$nombre', usuario='$usuario', rol='$rol'
-                WHERE IDusuarios=$id";
+    // Verificar duplicado al editar (excepto el mismo ID)
+    $check = $mysqli->query("SELECT IDusuarios FROM usuarios WHERE usuario='$usuario' AND IDusuarios != $id");
+    if ($check && $check->num_rows > 0) {
+        $mensaje = "⚠️ El usuario <strong>$usuario</strong> ya está en uso por otro registro.";
     } else {
-        $contraseña = password_hash($_POST['contraseña'], PASSWORD_DEFAULT);
-        $sql = "UPDATE usuarios SET 
-                    nombre='$nombre', usuario='$usuario', contraseña='$contraseña', rol='$rol'
-                WHERE IDusuarios=$id";
+        if (empty($_POST['contraseña'])) {
+            $sql = "UPDATE usuarios SET 
+                        nombre='$nombre', usuario='$usuario', rol='$rol'
+                    WHERE IDusuarios=$id";
+        } else {
+            $contraseña = $_POST['contraseña'];
+            $sql = "UPDATE usuarios SET 
+                        nombre='$nombre', usuario='$usuario', contraseña='$contraseña', rol='$rol'
+                    WHERE IDusuarios=$id";
+        }
+
+        if ($mysqli->query($sql)) {
+            $mensaje = "✅ Usuario actualizado correctamente.";
+        } else {
+            $mensaje = "❌ Error al actualizar: " . $mysqli->error;
+        }
     }
-    $mysqli->query($sql);
 }
 
 // Consultar usuarios
 $result = $mysqli->query("SELECT * FROM usuarios ORDER BY IDusuarios DESC");
-
 ?>
+
 <!-- Muestra el contenido principal de la pagina  -->
 
 <div class="container-fluid">
 
     <!-- Page Heading -->
     <h1 class="h3 mb-4 text-gray-800">Usuarios</h1>
+
+    <!-- Mensajes -->
+    <?php if ($mensaje != ""): ?>
+        <div class="alert <?php echo strpos($mensaje,'✅') !== false ? 'alert-success' : 'alert-danger'; ?>">
+            <?= $mensaje ?>
+        </div>
+    <?php endif; ?>
 
     <h2>Registrar Usuario</h2>
     <form method="POST" class="row g-3">
@@ -65,7 +101,6 @@ $result = $mysqli->query("SELECT * FROM usuarios ORDER BY IDusuarios DESC");
             <input type="password" name="contraseña" class="form-control" placeholder="Contraseña" required>
         </div>
         <div class="col-md-2 mb-2">
-            <!-- Select en lugar de dropdown -->
             <select name="rol" class="form-control" required>
                 <option value="">Seleccionar Rol</option>
                 <option value="admin">Admin</option>
@@ -99,10 +134,8 @@ $result = $mysqli->query("SELECT * FROM usuarios ORDER BY IDusuarios DESC");
                 <td><?= $row['usuario'] ?></td>
                 <td><?= ucfirst($row['rol']) ?></td>
                 <td>
-                    <!-- Botón editar -->
                     <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editModal<?= $row['IDusuarios'] ?>">Editar</button>
-                    <!-- Botón eliminar -->
-                    <a href="usuarios.php?eliminar=<?= $row['IDusuarios'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este usuario?')">Eliminar</a>
+                    <a href="usuariosAdmin.php?eliminar=<?= $row['IDusuarios'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este usuario?')">Eliminar</a>
                 </td>
             </tr>
 
@@ -120,8 +153,6 @@ $result = $mysqli->query("SELECT * FROM usuarios ORDER BY IDusuarios DESC");
                       <input type="text" name="nombre" class="form-control mb-2" value="<?= $row['nombre'] ?>" required>
                       <input type="text" name="usuario" class="form-control mb-2" value="<?= $row['usuario'] ?>" required>
                       <input type="password" name="contraseña" class="form-control mb-2" placeholder="Nueva contraseña (opcional)">
-
-                      <!-- Select en lugar de dropdown -->
                       <select name="rol" class="form-control mb-2" required>
                           <option value="admin" <?= $row['rol']=='admin'?'selected':'' ?>>Admin</option>
                           <option value="vendedor" <?= $row['rol']=='vendedor'?'selected':'' ?>>Vendedor</option>
