@@ -313,13 +313,32 @@ $usuario = $resultado->fetch_assoc();
                         <div class="topbar-divider d-none d-sm-block"></div>
 
                         <!-- Nav Item - User Information -->
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?= $usuario['usuario'] ?><sup> Admin</sup></span>
-                                <img class="img-profile rounded-circle"
-                                    src="img/undraw_profile.svg">
-                            </a>
+<li class="nav-item dropdown no-arrow">
+    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+            <?= htmlspecialchars($usuario['usuario']) ?><sup> <?= htmlspecialchars($usuario['rol']) ?></sup>
+        </span>
+        <img class="img-profile rounded-circle"
+             src="<?php echo !empty($usuario['foto']) ? htmlspecialchars($usuario['foto']) : 'uploads/perfil_default.png'; ?>"
+             style="width:40px; height:40px; object-fit:cover;">
+    </a>
+    <!-- Dropdown - User Information -->
+    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+        aria-labelledby="userDropdown">
+        <a class="dropdown-item" href="perfil.php">
+            <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+            Perfil
+        </a>
+        
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+            <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+            Cerrar Sesión
+        </a>
+    </div>
+</li>
+
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
