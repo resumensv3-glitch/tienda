@@ -52,8 +52,7 @@ $result = $mysqli->query("SELECT * FROM Clientes ORDER BY IDcliente DESC");
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- Page Heading -->
-                    <h1 class="h3 mb-4 text-gray-800">Clientes</h1>
+                
 <h2>Registrar Cliente</h2>
 <form method="POST" class="row g-3">
     <div class="col-md-6">
@@ -101,7 +100,7 @@ $result = $mysqli->query("SELECT * FROM Clientes ORDER BY IDcliente DESC");
             <td>
                 <!-- Botón editar (abre modal) -->
                 <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal<?= $row['IDcliente'] ?>">Editar</button>
-                <a href="clientes.php?eliminar=<?= $row['IDcliente'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este cliente?')">Eliminar</a>
+                <a href="clientesVende.php?eliminar=<?= $row['IDcliente'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este cliente?')">Eliminar</a>
             </td>
         </tr>
 
@@ -116,7 +115,7 @@ $result = $mysqli->query("SELECT * FROM Clientes ORDER BY IDcliente DESC");
                 </div>
                 <div class="modal-body">
                   <input type="hidden" name="id" value="<?= $row['IDcliente'] ?>">
-                  <input type="text" name="nombre" class="form-control mb-2" value="<?= $row['nombre'] ?>" required>
+                  <input type="text" name="nombre" class="form-control mb-2" value="<?= $row['nombre'] ?>" placeholder="Ingrese el DUI" required>
                   <input type="text" name="apellido" class="form-control mb-2" value="<?= $row['apellido'] ?>" required>
                   <input type="email" name="email" class="form-control mb-2" value="<?= $row['email'] ?>">
                   <input type="text" name="telefono" class="form-control mb-2" value="<?= $row['telefono'] ?>">

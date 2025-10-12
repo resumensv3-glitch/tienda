@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 02-10-2025 a las 21:33:58
+-- Tiempo de generación: 11-10-2025 a las 19:36:57
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -173,7 +173,7 @@ INSERT INTO `productos` (`IDproductos`, `producto`, `categorias`, `imagen`, `sto
 (2, 'Camisas Rojas', 1, 'uploads/1758389200_rojas.jpg', 3, 'Nike', 'S', 80.00),
 (3, 'Pantalones Boddy', 2, 'uploads/1758389238_pantalon.jpg', 43, '0', '34', 20.00),
 (4, 'Camisas verdes', 1, 'uploads/1758764674_verde.jpg', 13, '0', 'S', 10.00),
-(5, 'Falda Verde', 3, 'uploads/1759246350_falda verde.jpeg', 36, 'Calvin Clein', '34', 60.00);
+(5, 'Falda Verde', 3, 'uploads/1760203203_descarga.jpg', 36, 'Calvin Clein', '34', 60.00);
 
 -- --------------------------------------------------------
 
@@ -186,17 +186,18 @@ CREATE TABLE `usuarios` (
   `nombre` varchar(50) NOT NULL,
   `usuario` varchar(20) NOT NULL,
   `contraseña` varchar(255) NOT NULL,
-  `rol` enum('admin','vendedor','bodega') NOT NULL
+  `rol` enum('admin','vendedor','bodega') NOT NULL,
+  `foto` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`IDusuarios`, `nombre`, `usuario`, `contraseña`, `rol`) VALUES
-(1, 'Maria Teresa', 'Teresa', '123', 'admin'),
-(2, 'Henrry Teus', 'Teus', '123', 'vendedor'),
-(3, 'Valentina Capuchina', 'Valentina', '123', 'bodega');
+INSERT INTO `usuarios` (`IDusuarios`, `nombre`, `usuario`, `contraseña`, `rol`, `foto`) VALUES
+(1, 'Maria Teresa', 'Teresa', '123', 'admin', NULL),
+(2, 'Henrry Teus', 'Teus', '123', 'vendedor', 'uploads/68ea90e18d0a2_descarga.jpg'),
+(3, 'Valentina Capuchina', 'Valentina', '123', 'bodega', NULL);
 
 -- --------------------------------------------------------
 

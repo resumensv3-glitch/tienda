@@ -122,7 +122,7 @@ $usuario = $resultado->fetch_assoc();
 
             <!-- Nav tabla de facturas -->
             <li class="nav-item">
-                <a class="nav-link" href="clientesAdmin.php">
+                <a class="nav-link" href="clientes.php">
                     <i class="fas fa-fw fa-user-tag"></i>
                     <span>Clientes</span></a>
             </li>

@@ -120,7 +120,7 @@ if ($resultado && $resultado->num_rows > 0) {
 
             <!-- Nav tabla de facturas -->
             <li class="nav-item">
-                <a class="nav-link" href="clientesVende.php">
+                <a class="nav-link" href="clientes.php">
                     <i class="fas fa-fw fa-user-tag"></i>
                     <span>Clientes</span></a>
             </li>

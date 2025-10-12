@@ -44,9 +44,7 @@ $result = $mysqli->query("SELECT * FROM Clientes ORDER BY IDcliente DESC");
 <!-- Muestra el contenido principal de la página -->
 <div class="container-fluid">
 
-    <!-- Page Heading -->
-    <h1 class="h3 mb-4 text-gray-800">Perfil</h1>
-
+    
     <!-- ✅ CONTENIDO NUEVO: PERFIL DEL USUARIO -->
     <div class="card shadow mb-4" style="max-width: 800px; margin:auto;">
         <div class="card-header py-3 bg-danger text-white">
