@@ -1,6 +1,30 @@
 <?php 
 require 'conexion.php'; 
-require 'vista/parte_superior_vendedor.php';  
+// Función para cargar la cabecera según rol
+function cargarCabecera() {
+    if (!isset($_SESSION['rol'])) {
+        header("Location: login.php");
+        exit;
+    }
+
+    switch ($_SESSION['rol']) {
+        case 'admin':
+            require 'vista/parte_superior_administrador.php';
+            break;
+        case 'vendedor':
+            require 'vista/parte_superior_vendedor.php';
+            break;
+        case 'vendedor':
+            require 'vista/parte_superior_bodega.php';
+            break;
+        default:
+            header("Location: login.php");
+            exit;
+    }
+}
+
+// Llamamos la función para mostrar la cabecera correcta
+cargarCabecera();
 
 // Capturar filtros
 $filtroCategoria = isset($_GET['categoria']) ? $_GET['categoria'] : '';

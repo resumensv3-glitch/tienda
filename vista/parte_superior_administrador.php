@@ -100,7 +100,7 @@ $usuario = $resultado->fetch_assoc();
 
             <!-- Nav Item - Productos -->
             <li class="nav-item">
-                <a class="nav-link" href="tablaProductosAdmin.php">
+                <a class="nav-link" href="tablaProductos.php">
                     <i class="fas fa-fw fa-shopping-basket"></i>
                     <span>Productos</span></a>
             </li>
