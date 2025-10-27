@@ -2,7 +2,9 @@
 session_start();
 require 'conexion.php';
 
-// Función para cargar la cabecera según rol
+// ========================
+// FUNCION PARA CARGAR CABECERA
+// ========================
 function cargarCabecera() {
     if (!isset($_SESSION['rol'])) {
         header("Location: login.php");
@@ -22,23 +24,8 @@ function cargarCabecera() {
     }
 }
 
-// Llamamos la función para mostrar la cabecera correcta
-cargarCabecera();
-
 // ========================
-// ELIMINAR CLIENTE
-// ========================
-if (isset($_GET['eliminar'])) {
-    $id = (int)$_GET['eliminar'];
-    $stmt = $mysqli->prepare("DELETE FROM Clientes WHERE IDcliente = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    header("Location: clientes.php");
-    exit;
-}
-
-// ========================
-// EDITAR CLIENTE
+// EDITAR CLIENTE (ANTES DE IMPRIMIR HTML)
 // ========================
 if (isset($_POST['editar'])) {
     $id = (int)$_POST['id'];
@@ -57,9 +44,11 @@ if (isset($_POST['editar'])) {
 }
 
 // ========================
-// CONSULTAR CLIENTES
+// CARGAR CABECERA Y DATOS
 // ========================
+cargarCabecera();
 $result = $mysqli->query("SELECT * FROM Clientes ORDER BY IDcliente DESC");
+$clientes = $result->fetch_all(MYSQLI_ASSOC); // Traemos todos en un array
 ?>
 
 <div class="container-fluid">
@@ -76,7 +65,7 @@ $result = $mysqli->query("SELECT * FROM Clientes ORDER BY IDcliente DESC");
             </tr>
         </thead>
         <tbody>
-        <?php while($row = $result->fetch_assoc()): ?>
+        <?php foreach($clientes as $row): ?>
             <tr>
                 <td><?= $row['IDcliente'] ?></td>
                 <td><?= $row['nombre'] . " " . $row['apellido'] ?></td>
@@ -85,19 +74,16 @@ $result = $mysqli->query("SELECT * FROM Clientes ORDER BY IDcliente DESC");
                 <td><?= $row['DUI'] ?></td>
                 <td>
                     <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal<?= $row['IDcliente'] ?>">Editar</button>
-                    <a href="clientes.php?eliminar=<?= $row['IDcliente'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este cliente?')">Eliminar</a>
+                    <!-- Eliminar cliente DESACTIVADO -->
                 </td>
             </tr>
-        <?php endwhile; ?>
+        <?php endforeach; ?>
         </tbody>
     </table>
 </div>
 
 <!-- MODALES DE EDICIÓN -->
-<?php
-$result->data_seek(0); // reinicia el puntero
-while($row = $result->fetch_assoc()):
-?>
+<?php foreach($clientes as $row): ?>
 <div class="modal fade" id="editModal<?= $row['IDcliente'] ?>" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -121,6 +107,6 @@ while($row = $result->fetch_assoc()):
     </div>
   </div>
 </div>
-<?php endwhile; ?>
+<?php endforeach; ?>
 
 <?php require 'vista/parte_inferior.php'; ?>

@@ -3,6 +3,7 @@ session_start();
 require 'conexion.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_SESSION['carrito'])) {
+
     // ===== Datos del cliente =====
     $nombre   = $_POST['nombre'];
     $apellido = $_POST['apellido'];
@@ -41,13 +42,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_SESSION['carrito'])) {
     foreach ($_SESSION['carrito'] as $item) {
         $subtotal_item = $item['precio'] * $item['cantidad'];
 
-        // Detalle de venta
         $stmt = $mysqli->prepare("INSERT INTO detalle_ventas (IDventas, IDproductos, cantidad, precio_unitario, subtotal) VALUES (?,?,?,?,?)");
         $stmt->bind_param("iiidd", $IDventas, $item['IDproductos'], $item['cantidad'], $item['precio'], $subtotal_item);
         $stmt->execute();
         $stmt->close();
 
-        // Actualizar stock
         $stmt = $mysqli->prepare("UPDATE productos SET stock = stock - ? WHERE IDproductos=?");
         $stmt->bind_param("ii", $item['cantidad'], $item['IDproductos']);
         $stmt->execute();
@@ -57,8 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_SESSION['carrito'])) {
     // ===== Vaciar carrito =====
     unset($_SESSION['carrito']);
 
-    // ===== Redirigir a la factura =====
-    header("Location: factura.php?id=$IDventas");
+    // ===== Redirigir a factura PDF directamente =====
+    header("Location: factura.php?id=".$IDventas);
     exit;
 }
 ?>

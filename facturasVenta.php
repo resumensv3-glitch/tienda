@@ -1,13 +1,13 @@
 <?php
-
+session_start();
 require 'conexion.php';
+
 // Función para cargar la cabecera según rol
 function cargarCabecera() {
     if (!isset($_SESSION['rol'])) {
         header("Location: login.php");
         exit;
     }
-
     switch ($_SESSION['rol']) {
         case 'admin':
             require 'vista/parte_superior_administrador.php';
@@ -23,8 +23,6 @@ function cargarCabecera() {
             exit;
     }
 }
-
-// Llamamos la función para mostrar la cabecera correcta
 cargarCabecera();
 
 // Consulta resumen de ventas
@@ -41,16 +39,12 @@ $total_subtotal = 0;
 $total_iva = 0;
 $total_total = 0;
 ?>
-<!-- Inicio del contenido de la página -->
+
 <div class="container-fluid">
-
     <h1 class="h3 mb-2 text-gray-800">Resumen de ventas</h1>
-
-    <!-- Tabla de ventas -->
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h6 class="m-0 font-weight-bold text-danger">Listado de facturas</h6>
-            <!-- Botón global de nueva factura opcional -->
             <a href="VenderVenta.php" class="btn btn-success btn-sm">
                 <i class="fas fa-plus"></i> Nueva venta
             </a>
@@ -84,6 +78,7 @@ $total_total = 0;
                                     <td>$<?php echo number_format($row['iva'],2); ?></td>
                                     <td>$<?php echo number_format($row['total'],2); ?></td>
                                     <td class="text-center">
+                                        <!-- DESCARGA DIRECTA -->
                                         <a href="factura.php?id=<?php echo $row['IDventas']; ?>" 
                                            class="btn btn-primary btn-sm" target="_blank">
                                             <i class="fas fa-file-invoice"></i> Generar factura
@@ -110,8 +105,6 @@ $total_total = 0;
             </div>
         </div>
     </div>
-
 </div>
-<!-- /.fin del contenido de la página -->
 
 <?php require 'vista/parte_inferior.php'; ?>

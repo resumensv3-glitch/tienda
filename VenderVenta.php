@@ -118,3 +118,31 @@ require 'vista/parte_superior_vendedor.php';
 <!-- /.fin del contenido de la página -->
 
 <?php require 'vista/parte_inferior.php'; ?>
+
+<?php
+// ===== Descargar factura automáticamente si existe =====
+if (isset($_SESSION['IDventa_pdf'])) {
+    $IDventa_pdf = $_SESSION['IDventa_pdf'];
+    unset($_SESSION['IDventa_pdf']); // limpiar variable
+
+    echo "<script>
+    fetch('factura.php')
+      .then(res => {
+          if(!res.ok) throw new Error('No se encontró la factura.');
+          return res.blob();
+      })
+      .then(blob => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'factura_" . $IDventa_pdf . ".pdf';
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+      })
+      .catch(error => {
+          alert(error.message); // Mostrar error en la misma página
+      });
+    </script>";
+}
+?>
