@@ -12,12 +12,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_SESSION['carrito'])) {
     $dui      = !empty($_POST['dui']) ? $_POST['dui'] : NULL;
     $tipo_factura = $_POST['tipo_factura'];
 
-    // ===== Insertar cliente =====
-    $stmt = $mysqli->prepare("INSERT INTO clientes (nombre, apellido, email, telefono, DUI) VALUES (?,?,?,?,?)");
-    $stmt->bind_param("sssss", $nombre, $apellido, $email, $telefono, $dui);
-    $stmt->execute();
-    $IDcliente = $stmt->insert_id;
-    $stmt->close();
+    // ===== Verificar si el cliente ya existe =====
+    $IDcliente = null;
+    if (!empty($dui)) {
+        $stmt = $mysqli->prepare("SELECT IDcliente FROM clientes WHERE DUI = ?");
+        $stmt->bind_param("s", $dui);
+        $stmt->execute();
+        $stmt->bind_result($IDcliente);
+        $stmt->fetch();
+        $stmt->close();
+    } elseif (!empty($email)) {
+        $stmt = $mysqli->prepare("SELECT IDcliente FROM clientes WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $stmt->bind_result($IDcliente);
+        $stmt->fetch();
+        $stmt->close();
+    }
+
+    // ===== Si no existe, insertarlo =====
+    if (empty($IDcliente)) {
+        $stmt = $mysqli->prepare("INSERT INTO clientes (nombre, apellido, email, telefono, DUI) VALUES (?,?,?,?,?)");
+        $stmt->bind_param("sssss", $nombre, $apellido, $email, $telefono, $dui);
+        $stmt->execute();
+        $IDcliente = $stmt->insert_id;
+        $stmt->close();
+    }
 
     // ===== Calcular totales =====
     $subtotal = 0;
@@ -38,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_SESSION['carrito'])) {
     $IDventas = $stmt->insert_id;
     $stmt->close();
 
-    // ===== Insertar detalle de venta y descontar stock =====
+    // ===== Insertar detalle de venta y actualizar stock =====
     foreach ($_SESSION['carrito'] as $item) {
         $subtotal_item = $item['precio'] * $item['cantidad'];
 
@@ -47,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_SESSION['carrito'])) {
         $stmt->execute();
         $stmt->close();
 
-        $stmt = $mysqli->prepare("UPDATE productos SET stock = stock - ? WHERE IDproductos=?");
+        $stmt = $mysqli->prepare("UPDATE productos SET stock = stock - ? WHERE IDproductos = ?");
         $stmt->bind_param("ii", $item['cantidad'], $item['IDproductos']);
         $stmt->execute();
         $stmt->close();
@@ -56,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_SESSION['carrito'])) {
     // ===== Vaciar carrito =====
     unset($_SESSION['carrito']);
 
-    // ===== Redirigir a factura PDF directamente =====
+    // ===== Redirigir a factura =====
     header("Location: factura.php?id=".$IDventas);
     exit;
 }
